@@ -19,10 +19,10 @@ local function difficulty_sloped(difficulty,slope)
 	return 1 + ((difficulty - 1) * slope)
 end
 -- SLOPE GUIDE
--- slope 1 -> {0.25, 0.50, 0.75, 1.00, 1.50, 3.00, 5.00}
--- slope 4/5 -> {0.20, 0.40, 0.60, 0.80, 1.20, 2.40, 4.00}
--- slope 3/5 -> {0.15, 0.30, 0.45, 0.60, 0.90, 1.80, 3.00}
--- slope 2/5 -> {0.10, 0.20, 0.30, 0.40, 0.60, 1.20, 2.00}
+-- slope 1 -> {0.25, 0.5, 0.75, 1, 1.5, 3, 5}
+-- slope 4/5 -> {0.4, 0.6, 0.8, 1, 1.4, 2.6, 4.2}
+-- slope 3/5 -> {0.55, 0.7, 0.85, 1, 1.3, 2.2, 3.4}
+-- slope 2/5 -> {0.7, 0.8, 0.9, 1, 1.2, 1.8, 2.6}
   
 local function difficulty_exp(difficulty,exponent)
 
@@ -204,7 +204,7 @@ function Public.flamers_nerfs_size(jumps, difficulty) return 0.02 * jumps * diff
 
 function Public.max_new_attack_group_size(difficulty) return math_max(200,math_floor(120 * difficulty_sloped(difficulty, 1))) end
 
-function Public.evoramp50_multiplier_per_10s(difficulty) return (1 + 1/200 * difficulty_sloped(difficulty, 3/5)) end
+function Public.evoramp50_multiplier_per_10s(difficulty) return (1 + 1/600 * difficulty_sloped(difficulty, 3/5)) end
 
 function Public.nukes_looted_per_silo(difficulty) return math_max(10, 10 * math_ceil(difficulty_sloped(difficulty, 1))) end
 
