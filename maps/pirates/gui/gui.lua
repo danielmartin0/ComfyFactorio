@@ -74,6 +74,22 @@ local function create_gui(player)
 	flow2 = GuiCommon.flow_add_floating_sprite_button(flow1, 'crew_piratebutton')
 	flow2.sprite = 'utility/spawn_flag'
 
+	local skull_flow = flow2.add({
+		type = 'flow',
+		direction = 'horizontal',
+	})
+	skull_flow.style.left_padding = 7
+	skull_flow.style.top_padding = 6
+
+	flow3 = skull_flow.add({
+		name = 'flag-skull',
+		type = 'sprite',
+	})
+	flow3.style.height = 10
+	flow3.style.width = 10
+	flow3.sprite = 'virtual-signal/signal-skull'
+	flow3.resize_to_sprite = false
+
 	flow2 = GuiCommon.flow_add_floating_sprite_button(flow1, 'classes_piratebutton')
 	flow2.sprite = 'item/light-armor'
 
