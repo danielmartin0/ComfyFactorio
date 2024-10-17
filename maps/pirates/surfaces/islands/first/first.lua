@@ -109,12 +109,9 @@ function Public.terrain(args)
 		-- Place lettuce:
 		local lettuce_density = 0.005 * Math.slopefromto(noises.rock(p), -0.05, -0.4)
 		local lettuce_rng = Math.random()
-		-- if lettuce_rng < lettuce_density then
-		-- 	args.decoratives[#args.decoratives + 1] = { name = 'green-lettuce-lichen-1x1', position = args.p }
-		-- elseif lettuce_rng < lettuce_density * 4 then
-		-- 	args.decoratives[#args.decoratives + 1] = { name = 'green-bush-mini', position = args.p }
-		-- end
-		if lettuce_rng < lettuce_density * 4 then
+		if lettuce_rng < lettuce_density then
+			args.decoratives[#args.decoratives + 1] = { name = 'green-lettuce-lichen-1x1', position = args.p }
+		elseif lettuce_rng < lettuce_density * 4 then
 			args.decoratives[#args.decoratives + 1] = { name = 'green-bush-mini', position = args.p }
 		end
 	end

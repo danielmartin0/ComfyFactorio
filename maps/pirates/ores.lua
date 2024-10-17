@@ -3,7 +3,7 @@
 local Balance = require('maps.pirates.balance')
 -- local Memory = require 'maps.pirates.memory'
 local Math = require('maps.pirates.math')
-local Raffle = require 'utils.math.raffle'
+local Raffle = require('utils.math.raffle')
 local CoreData = require('maps.pirates.coredata')
 local _inspect = require('utils.inspect').inspect
 local Common = require('maps.pirates.common')

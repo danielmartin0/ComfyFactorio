@@ -15,8 +15,7 @@ Public.static_params_default = {
 	daynightcycletype = 4,
 	min_brightness = 0.05,
 	brightness_visual_weights = { 1, 1, 1 }, --almost pitch black
-	decorative_preset = 'nauvis',
-	-- decorative_preset = 'vulcanus',
+	decorative_preset = 'vulcanus',
 	base_starting_rock_material = 800,
 }
 
