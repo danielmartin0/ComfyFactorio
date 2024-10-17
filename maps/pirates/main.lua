@@ -25,6 +25,7 @@ require('modules.biter_noms_you')
 require('modules.no_deconstruction_of_neutral_entities')
 require('utils.server')
 local _inspect = require('utils.inspect').inspect
+local safe_call = require('utils.safe_call')
 -- local Modifers = require 'player_modifiers'
 local BottomFrame = require('utils.gui.bottom_frame')
 local Autostash = require('modules.autostash')
@@ -146,42 +147,42 @@ local function crew_tick()
 		end
 	end
 
-	PiratesApiOnTick.boat_movement_tick(5) --arguments are tick intervals
-	-- PiratesApiOnTick.parrot_tick(5)
+	safe_call(PiratesApiOnTick.boat_movement_tick, 5) --arguments are tick intervals
+	-- safe_call(PiratesApiOnTick.parrot_tick, 5)
 
-	PiratesApiOnTick.quest_progress_tick(5)
-	PiratesApiOnTick.strobe_player_colors(5)
+	safe_call(PiratesApiOnTick.quest_progress_tick, 5)
+	safe_call(PiratesApiOnTick.strobe_player_colors, 5)
 
 	if tick % 10 == 0 then
-		PiratesApiOnTick.prevent_disembark(10)
-		PiratesApiOnTick.prevent_unbarreling_off_ship(10)
-		-- PiratesApiOnTick.shop_ratelimit_tick(10)
-		BuriedTreasure.pick_up_treasure_tick(10)
-		PiratesApiOnTick.pick_up_ghosts_tick(10)
-		QuestStructures.tick_quest_structure_entry_price_check()
-		PiratesApiOnTick.update_boat_stored_resources(10)
+		safe_call(PiratesApiOnTick.prevent_disembark, 10)
+		safe_call(PiratesApiOnTick.prevent_unbarreling_off_ship, 10)
+		-- safe_call(PiratesApiOnTick.shop_ratelimit_tick, 10)
+		safe_call(BuriedTreasure.pick_up_treasure_tick, 10)
+		safe_call(PiratesApiOnTick.pick_up_ghosts_tick, 10)
+		safe_call(QuestStructures.tick_quest_structure_entry_price_check)
+		safe_call(PiratesApiOnTick.update_boat_stored_resources, 10)
 
 		if tick % 30 == 0 then
-			PiratesApiOnTick.silo_update(30)
-			BuriedTreasure.buried_treasure_tick(30)
-			PiratesApiOnTick.apply_restrictions_to_machines(30)
-			ClassPiratesApiOnTick.update_character_properties(30)
-			ClassPiratesApiOnTick.class_update_auxiliary_data(30)
-			ClassPiratesApiOnTick.class_renderings(30)
+			safe_call(PiratesApiOnTick.silo_update, 30)
+			safe_call(BuriedTreasure.buried_treasure_tick, 30)
+			safe_call(PiratesApiOnTick.apply_restrictions_to_machines, 30)
+			safe_call(ClassPiratesApiOnTick.update_character_properties, 30)
+			safe_call(ClassPiratesApiOnTick.class_update_auxiliary_data, 30)
+			safe_call(ClassPiratesApiOnTick.class_renderings, 30)
 
 			if tick % 60 == 0 then
-				PiratesApiOnTick.captain_warn_afk(60)
-				PiratesApiOnTick.ship_deplete_fuel(60)
-				PiratesApiOnTick.crowsnest_natural_move(60)
-				PiratesApiOnTick.slower_boat_tick(60)
-				PiratesApiOnTick.raft_raids(60)
-				PiratesApiOnTick.place_cached_structures(60)
-				PiratesApiOnTick.update_alert_sound_frequency_tracker()
-				PiratesApiOnTick.check_for_cliff_explosives_in_hold_wooden_chests()
-				PiratesApiOnTick.equalise_fluid_storages() -- Made the update less often for small performance gain, but frequency can be increased if players complain
-				BuriedTreasure.revealed_buried_treasure_distance_check()
-				PiratesApiOnTick.victory_continue_reminder()
-				Kraken.overall_kraken_tick()
+				safe_call(PiratesApiOnTick.captain_warn_afk, 60)
+				safe_call(PiratesApiOnTick.ship_deplete_fuel, 60)
+				safe_call(PiratesApiOnTick.crowsnest_natural_move, 60)
+				safe_call(PiratesApiOnTick.slower_boat_tick, 60)
+				safe_call(PiratesApiOnTick.raft_raids, 60)
+				safe_call(PiratesApiOnTick.place_cached_structures, 60)
+				safe_call(PiratesApiOnTick.update_alert_sound_frequency_tracker)
+				safe_call(PiratesApiOnTick.check_for_cliff_explosives_in_hold_wooden_chests)
+				safe_call(PiratesApiOnTick.equalise_fluid_storages)
+				safe_call(BuriedTreasure.revealed_buried_treasure_distance_check)
+				safe_call(PiratesApiOnTick.victory_continue_reminder)
+				safe_call(Kraken.overall_kraken_tick)
 
 				if destination.dynamic_data.timer then
 					destination.dynamic_data.timer = destination.dynamic_data.timer + 1
@@ -190,7 +191,7 @@ local function crew_tick()
 				if memory.captain_acceptance_timer then
 					memory.captain_acceptance_timer = memory.captain_acceptance_timer - 1
 					if memory.captain_acceptance_timer == 0 then
-						Roles.assign_captain_based_on_priorities()
+						safe_call(Roles.assign_captain_based_on_priorities)
 					end
 				end
 
@@ -211,7 +212,7 @@ local function crew_tick()
 					end
 				end
 
-				PiratesApiOnTick.update_time_remaining()
+				safe_call(PiratesApiOnTick.update_time_remaining)
 
 				if destination.dynamic_data.disabled_wave_timer then
 					destination.dynamic_data.disabled_wave_timer =
@@ -219,34 +220,34 @@ local function crew_tick()
 				end
 
 				if tick % 120 == 0 then
-					Ai.Tick_actions(120)
+					safe_call(Ai.Tick_actions, 120)
 
 					if tick % 240 == 0 then
-						-- PiratesApiOnTick.check_all_spawners_dead(240) -- incentivises killing all spawners too much
+						-- safe_call(PiratesApiOnTick.check_all_spawners_dead, 240) -- incentivises killing all spawners too much
 						if memory.max_players_recorded then
 							local count_now = #Common.crew_get_crew_members()
 							if count_now and count_now > memory.max_players_recorded then
 								memory.max_players_recorded = count_now
 							end
 						end
-						PiratesApiOnTick.Kraken_Destroyed_Backup_check(240)
-						PiratesApiOnTick.LOS_tick(240)
+						safe_call(PiratesApiOnTick.Kraken_Destroyed_Backup_check, 240)
+						safe_call(PiratesApiOnTick.LOS_tick, 240)
 					end
 				end
 
 				if tick % (60 * Balance.class_reward_tick_rate_in_seconds) == 0 then
-					ClassPiratesApiOnTick.class_rewards_tick(60 * Balance.class_reward_tick_rate_in_seconds)
+					safe_call(ClassPiratesApiOnTick.class_rewards_tick, 60 * Balance.class_reward_tick_rate_in_seconds)
 				end
 
 				if tick % 300 == 0 then
-					PiratesApiOnTick.periodic_free_resources(300)
-					PiratesApiOnTick.update_pet_biter_lifetime(300)
+					safe_call(PiratesApiOnTick.periodic_free_resources, 300)
+					safe_call(PiratesApiOnTick.update_pet_biter_lifetime, 300)
 
 					if tick % 1800 == 0 then
-						PiratesApiOnTick.transfer_pollution(1800)
+						safe_call(PiratesApiOnTick.transfer_pollution, 1800)
 
 						if tick % 3600 == 0 then
-							PiratesApiOnTick.prune_offline_characters_list(3600)
+							safe_call(PiratesApiOnTick.prune_offline_characters_list, 3600)
 						end
 					end
 				end
@@ -257,12 +258,12 @@ local function crew_tick()
 	if tick % 60 == 15 or tick % 60 == 45 then
 		-- @TODO move this ugly check to function?
 		if memory.boat and memory.boat.state == Structures.Boats.enum_state.ATSEA_SAILING then
-			PiratesApiOnTick.overworld_check_collisions(120)
+			safe_call(PiratesApiOnTick.overworld_check_collisions, 120)
 		end
 	end
 
 	if tick % 60 == 30 then
-		PiratesApiOnTick.crowsnest_steer(120)
+		safe_call(PiratesApiOnTick.crowsnest_steer, 120)
 	end
 
 	if tick % Common.loading_interval == 0 then
@@ -294,24 +295,24 @@ local function global_tick()
 	local tick = game.tick
 
 	if tick % 60 == 0 then
-		PiratesApiOnTick.update_players_second()
+		safe_call(PiratesApiOnTick.update_players_second)
 	end
 
 	if tick % 30 == 0 then
 		for _, player in pairs(game.connected_players) do
 			local crew_id = Common.get_id_from_force_name(player.force.name)
 			Memory.set_working_id(crew_id)
-			Roles.update_tags(player)
+			safe_call(Roles.update_tags, player)
 		end
 	end
 
 	for _, id in pairs(global_memory.crew_active_ids) do
 		Memory.set_working_id(id)
 
-		crew_tick()
+		safe_call(crew_tick)
 	end
 
-	PiratesApiOnTick.update_player_guis(5)
+	safe_call(PiratesApiOnTick.update_player_guis, 5)
 end
 
 event.on_nth_tick(5, global_tick)
@@ -320,8 +321,8 @@ local function instatick()
 	local global_memory = Memory.get_global_memory()
 	for _, id in pairs(global_memory.crew_active_ids) do
 		Memory.set_working_id(id)
-		PiratesApiOnTick.minimap_jam(1)
-		PiratesApiOnTick.silo_insta_update()
+		safe_call(PiratesApiOnTick.minimap_jam, 1)
+		safe_call(PiratesApiOnTick.silo_insta_update)
 	end
 end
 
