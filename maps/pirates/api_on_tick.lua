@@ -1761,7 +1761,7 @@ local function equalise_fluid_storage_pair(storage1, storage2)
 		amount = source_fluid.amount * 0.5
 	end
 
-	if amount <= 0 then
+	if not amount > 0 then
 		return
 	end
 
