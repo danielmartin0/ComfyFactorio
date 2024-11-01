@@ -56,7 +56,7 @@ function Public.toggle_window(player)
 
 	flow2 = Public.flow_add_info_tab(flow, { 'pirates.gui_info_updates' })
 
-	Public.flow_add_info_sections(flow2, { '1', '2' })
+	Public.flow_add_info_sections(flow2, { 'changelog-1', 'changelog-2' })
 	-- Public.flow_add_info_sections(flow2, {'updates', 'bugs'})
 
 	flow2 = Public.flow_add_info_tab(flow, { 'pirates.gui_info_credits' })
@@ -70,18 +70,53 @@ function Public.flow_add_info_sections(flow, sections_list)
 	for j = 1, #sections_list do
 		local i = sections_list[j]
 
-		flow2 = flow.add({ type = 'label', caption = { 'pirates.softmod_info_' .. i .. '_1' } })
-		flow2.style.font_color = GuiCommon.friendly_font_color
-		flow2.style.single_line = false
-		flow2.style.font = 'default-semibold'
-		flow2.style.bottom_margin = -4
+		-- For changelog sections, we use direct text rather than locale lookups
+		if i == 'changelog-1' then
+			flow2 = flow.add({ type = 'label', caption = 'v1.7 highlights' })
+			flow2.style.font_color = GuiCommon.friendly_font_color
+			flow2.style.single_line = false
+			flow2.style.font = 'default-semibold'
+			flow2.style.bottom_margin = -4
 
-		flow2 = flow.add({ type = 'label', caption = { 'pirates.softmod_info_' .. i .. '_2' } })
-		flow2.style.font_color = GuiCommon.friendly_font_color
-		flow2.style.single_line = false
-		flow2.style.font = 'default'
-		flow2.style.bottom_margin = 12
-		flow2.style.left_margin = 8
+			flow2 = flow.add({
+				type = 'label',
+				caption = '• Support for Factorio 2.0.\n• With the introduction of remote view, spectator mode has been retired.\n• 9 simultaneous crews are now supported.\n• The treasure map mechanic has been reworked to use cameras.\n• Ship movement no longer causes players to exit the GUI of entities on the ship.\n• Performance improvements.',
+			})
+			flow2.style.font_color = GuiCommon.friendly_font_color
+			flow2.style.single_line = false
+			flow2.style.font = 'default'
+			flow2.style.bottom_margin = 12
+			flow2.style.left_margin = 8
+		elseif i == 'changelog-2' then
+			flow2 = flow.add({ type = 'label', caption = 'v1.6 highlights' })
+			flow2.style.font_color = GuiCommon.friendly_font_color
+			flow2.style.single_line = false
+			flow2.style.font = 'default-semibold'
+			flow2.style.bottom_margin = -4
+
+			flow2 = flow.add({
+				type = 'label',
+				caption = '• New runs begin on the top lane so that beginners are more likely to encounter docks.\n• Players now die rather than being temporarily marooned if they miss the boat.\n• The pause at sea now occurs after the loading time for the next destination.\n• Optional setting for new crews to disable blueprints.\n• Machines now deactivate after several minutes spent waiting at sea.\n• Private crews and captain-protected crews no longer revert to public crews when inactive. Runs now autodisband after 96 hours of inactivity.\n• Shotguns are now buffed as intended.',
+			})
+			flow2.style.font_color = GuiCommon.friendly_font_color
+			flow2.style.single_line = false
+			flow2.style.font = 'default'
+			flow2.style.bottom_margin = 12
+			flow2.style.left_margin = 8
+		else
+			flow2 = flow.add({ type = 'label', caption = { 'pirates.softmod_info_' .. i .. '_1' } })
+			flow2.style.font_color = GuiCommon.friendly_font_color
+			flow2.style.single_line = false
+			flow2.style.font = 'default-semibold'
+			flow2.style.bottom_margin = -4
+
+			flow2 = flow.add({ type = 'label', caption = { 'pirates.softmod_info_' .. i .. '_2' } })
+			flow2.style.font_color = GuiCommon.friendly_font_color
+			flow2.style.single_line = false
+			flow2.style.font = 'default'
+			flow2.style.bottom_margin = 12
+			flow2.style.left_margin = 8
+		end
 	end
 end
 
