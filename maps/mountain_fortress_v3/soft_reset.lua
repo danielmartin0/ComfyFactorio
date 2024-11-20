@@ -5,8 +5,13 @@ local Event = require 'utils.event'
 local mapkeeper = '[color=blue]Mapkeeper:[/color]'
 
 local function reset_forces()
+    local surface = game.get_surface('nauvis')
+    if not surface or not surface.valid then
+        return
+    end
     for _, f in pairs(game.forces) do
         f.reset()
+        f.clear_chart(surface)
         f.reset_evolution()
     end
     for _, tech in pairs(game.forces.player.technologies) do

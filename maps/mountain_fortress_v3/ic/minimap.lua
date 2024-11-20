@@ -95,18 +95,18 @@ end
 
 local function get_player_data(player)
     local minimap = ICT.get('minimap')
-    local player_data = minimap[player.index]
-    if minimap[player.index] then
+    local player_data = minimap[player.name]
+    if minimap[player.name] then
         return player_data
     end
 
-    minimap[player.index] = {
+    minimap[player.name] = {
         zoom = 0.30,
         map_size = 360,
         auto = true,
         state = 'left'
     }
-    return minimap[player.index]
+    return minimap[player.name]
 end
 
 function Public.toggle_auto(player)

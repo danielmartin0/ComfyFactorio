@@ -319,7 +319,8 @@ local function draw_main_frame(player, location)
     add_gui_description(left_bottom_table, ({ 'rpg_gui.life_name' }), w1, ({ 'rpg_gui.life_tooltip' }))
     local health_gui = add_gui_stat(left_bottom_table, floor(player.character.health), w2, ({ 'rpg_gui.life_increase' }))
     data.health = health_gui
-    add_gui_stat(left_bottom_table, floor(player.character.max_health + player.character_health_bonus + player.force.character_health_bonus), w2, ({ 'rpg_gui.life_maximum' }))
+    local proto_char = prototypes.entity.character.get_max_health('normal')
+    add_gui_stat(left_bottom_table, floor(proto_char + player.character_health_bonus + player.force.character_health_bonus), w2, ({ 'rpg_gui.life_maximum' }))
 
     local shield = 0
     local shield_max = 0

@@ -99,7 +99,7 @@ local place_nest_near_unit_group = function ()
             local result = cb({ entity = unit, disable_spawn_near_target = disable_spawn_near_target })
             if result then
                 Public.debug_print('place_nest_near_unit_group  - custom callback returned true')
-                -- return
+                return
             end
         end
     end

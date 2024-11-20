@@ -43,6 +43,8 @@ ServerCommands.query_online_players = Server.query_online_players
 ServerCommands.ban_handler = Server.ban_handler
 
 function is_loaded(module)
+    if not module then return end
+    module = normalize_path(module)
     local res = _G.package.loaded[module]
     if res then
         return res
@@ -52,6 +54,8 @@ function is_loaded(module)
 end
 
 function is_loaded_bool(module)
+    if not module then return end
+    module = normalize_path(module)
     local res = _G.package.loaded[module]
     if res then
         return true
@@ -87,6 +91,11 @@ function has_space_age()
         end
     end
     return false
+end
+
+function normalize_path(path)
+    local level_path = '__level__/' .. path
+    return string.gsub(level_path, "%.", "/") .. ".lua"
 end
 
 return ServerCommands

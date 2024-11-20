@@ -162,6 +162,9 @@ function Public.reset_main_table()
     this.breach_wall_warning = false
     this.icw_locomotive = nil
     this.game_lost = false
+    this.charts = {
+        tags = {}
+    }
     this.death_mode = false
     this.collapse_started = false
     this.locomotive_position = nil

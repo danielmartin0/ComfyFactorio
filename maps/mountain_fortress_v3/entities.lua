@@ -248,12 +248,9 @@ local function set_train_final_health(final_damage_amount, repair)
         end
     end
 
-    if locomotive_health <= 0 or locomotive.health <= 5 then
+    if locomotive_health <= 0 then
         Public.set('locomotive_position', locomotive.position)
-        locomotive.health = 1
-        Public.set('game_lost', true)
-        Public.set_stateful('current_streak', 0)
-        Public.loco_died()
+        Public.game_is_over()
     end
 
     if locomotive_health <= 0 then
@@ -1179,26 +1176,32 @@ local function show_mvps(player)
         wave_defense_text.style.font = 'default-bold'
         wave_defense_text.style.font_color = { r = 0.33, g = 0.66, b = 0.9 }
 
-        local fighter_label = t.add({ type = 'label', caption = 'Fighter >> ' })
-        fighter_label.style.font = 'default-listbox'
-        fighter_label.style.font_color = { r = 0.22, g = 0.77, b = 0.44 }
-        local fighter_label_text = t.add({ type = 'label', caption = mvp.killscore.name .. ' with a killing score of ' .. mvp.killscore.score .. ' kills!' })
-        fighter_label_text.style.font = 'default-bold'
-        fighter_label_text.style.font_color = { r = 0.33, g = 0.66, b = 0.9 }
+        if mvp.killscore then
+            local fighter_label = t.add({ type = 'label', caption = 'Fighter >> ' })
+            fighter_label.style.font = 'default-listbox'
+            fighter_label.style.font_color = { r = 0.22, g = 0.77, b = 0.44 }
+            local fighter_label_text = t.add({ type = 'label', caption = mvp.killscore.name .. ' with a killing score of ' .. mvp.killscore.score .. ' kills!' })
+            fighter_label_text.style.font = 'default-bold'
+            fighter_label_text.style.font_color = { r = 0.33, g = 0.66, b = 0.9 }
+        end
 
-        local builder_label = t.add({ type = 'label', caption = 'Builder >> ' })
-        builder_label.style.font = 'default-listbox'
-        builder_label.style.font_color = { r = 0.22, g = 0.77, b = 0.44 }
-        local builder_label_text = t.add({ type = 'label', caption = mvp.built_entities.name .. ' built ' .. mvp.built_entities.score .. ' things!' })
-        builder_label_text.style.font = 'default-bold'
-        builder_label_text.style.font_color = { r = 0.33, g = 0.66, b = 0.9 }
+        if mvp.built_entities then
+            local builder_label = t.add({ type = 'label', caption = 'Builder >> ' })
+            builder_label.style.font = 'default-listbox'
+            builder_label.style.font_color = { r = 0.22, g = 0.77, b = 0.44 }
+            local builder_label_text = t.add({ type = 'label', caption = mvp.built_entities.name .. ' built ' .. mvp.built_entities.score .. ' things!' })
+            builder_label_text.style.font = 'default-bold'
+            builder_label_text.style.font_color = { r = 0.33, g = 0.66, b = 0.9 }
+        end
 
-        local miners_label = t.add({ type = 'label', caption = 'Miners >> ' })
-        miners_label.style.font = 'default-listbox'
-        miners_label.style.font_color = { r = 0.22, g = 0.77, b = 0.44 }
-        local miners_label_text = t.add({ type = 'label', caption = mvp.mined_entities.name .. ' mined a total of  ' .. mvp.mined_entities.score .. ' entities!' })
-        miners_label_text.style.font = 'default-bold'
-        miners_label_text.style.font_color = { r = 0.33, g = 0.66, b = 0.9 }
+        if mvp.mined_entities then
+            local miners_label = t.add({ type = 'label', caption = 'Miners >> ' })
+            miners_label.style.font = 'default-listbox'
+            miners_label.style.font_color = { r = 0.22, g = 0.77, b = 0.44 }
+            local miners_label_text = t.add({ type = 'label', caption = mvp.mined_entities.name .. ' mined a total of  ' .. mvp.mined_entities.score .. ' entities!' })
+            miners_label_text.style.font = 'default-bold'
+            miners_label_text.style.font_color = { r = 0.33, g = 0.66, b = 0.9 }
+        end
 
         local sent_to_discord = Public.get('sent_to_discord')
         local server_name_matches = Server.check_server_name(Public.discord_name)
@@ -1212,23 +1215,30 @@ local function show_mvps(player)
                     text1 = 'Highest Wave:',
                     text2 = wave_defense_table.wave_number,
                     inline = 'false'
-                },
-                field2 = {
+                }
+            }
+            if mvp.killscore then
+                message.field2 = {
                     text1 = 'MVP Fighter:',
                     text2 = mvp.killscore.name .. ' with a killing score of ' .. mvp.killscore.score .. ' kills!',
                     inline = 'false'
-                },
-                field3 = {
+                }
+            end
+            if mvp.built_entities then
+                message.field3 = {
                     text1 = 'MVP Builder:',
                     text2 = mvp.built_entities.name .. ' built ' .. mvp.built_entities.score .. ' things!',
                     inline = 'false'
-                },
-                field4 = {
+                }
+            end
+            if mvp.mined_entities then
+                message.field4 = {
                     text1 = 'MVP Miners:',
                     text2 = mvp.mined_entities.name .. ' mined a total of ' .. mvp.mined_entities.score .. ' entities!',
                     inline = 'false'
                 }
-            }
+            end
+
             Server.to_discord_embed_parsed(message)
             local wave = WD.get_wave()
             local threat = WD.get('threat')
@@ -1307,6 +1317,12 @@ local function show_mvps(player)
             Public.set('sent_to_discord', true)
         end
     end
+end
+
+function Public.game_is_over()
+    Public.set('game_lost', true)
+    Public.set_stateful('current_streak', 0)
+    Public.loco_died()
 end
 
 function Public.unstuck_player(index)

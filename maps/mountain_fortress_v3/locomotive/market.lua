@@ -472,14 +472,26 @@ local function get_items(player)
         upgrade = false,
         static = false
     }
-    main_market_items['raw-fish'] = {
-        stack = 1,
-        value = 'coin',
-        price = 4,
-        tooltip = ({ 'item-name.raw-fish' }),
-        upgrade = false,
-        static = false
-    }
+
+    if Public.is_modded then
+        main_market_items['raw-fish'] = {
+            stack = 1,
+            value = 'coin',
+            price = 20,
+            tooltip = ({ 'item-name.raw-fish' }),
+            upgrade = false,
+            static = false
+        }
+    else
+        main_market_items['raw-fish'] = {
+            stack = 1,
+            value = 'coin',
+            price = 4,
+            tooltip = ({ 'item-name.raw-fish' }),
+            upgrade = false,
+            static = false
+        }
+    end
     main_market_items['firearm-magazine'] = {
         stack = 1,
         value = 'coin',

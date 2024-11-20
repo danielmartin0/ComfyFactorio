@@ -566,7 +566,8 @@ function Public.update_health(player)
 
     if rpg_extra.enable_health_and_mana_bars then
         if rpg_t.show_bars then
-            local max_life = math.floor(player.character.max_health + player.character_health_bonus + player.force.character_health_bonus)
+            local proto_char = prototypes.entity.character.get_max_health('normal')
+            local max_life = math.floor(proto_char + player.character_health_bonus + player.force.character_health_bonus)
             if not rpg_t.health_bar or not rpg_t.health_bar.valid then
                 rpg_t.health_bar = create_healthbar(player, 0.5)
             end

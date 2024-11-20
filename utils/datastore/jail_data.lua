@@ -609,7 +609,6 @@ local function vote_to_free(player, offender)
     else
         Utils.print_to(player, 'You have already voted to free ' .. offender .. '.')
     end
-    return
 end
 
 local function jail(player, offender, msg, raised, mute)
@@ -742,11 +741,11 @@ local function free(player, offender)
         return false
     end
 
-    if not game.get_player(offender) then
+    local to_jail_player = game.get_player(offender)
+    if not to_jail_player or not to_jail_player.valid then
         return
     end
 
-    local to_jail_player = game.get_player(offender)
     teleport_player_to_gulag(to_jail_player, 'free')
 
     local message = offender .. ' was set free from jail by ' .. player .. '.'
@@ -987,7 +986,7 @@ end
 -- @param message string
 -- @param mute boolean
 function Public.try_ul_data(key, value, player, message, mute)
-    if type(key) == 'table' then
+    if type(key) == 'userdata' then
         key = key.name
     end
 

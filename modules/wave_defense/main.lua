@@ -166,7 +166,7 @@ local function fill_tiles(entity, size)
     Public.debug_print('fill_tiles - filled tiles cause we found non-placable tiles.')
 end
 
-local function get_spawn_pos()
+local function get_spawn_pos(spawner)
     local surface_index = Public.get('surface_index')
     local surface = game.surfaces[surface_index]
     if not surface then
@@ -181,16 +181,23 @@ local function get_spawn_pos()
     local target = Public.get('target')
 
     local inverted = Public.get('inverted')
-    if inverted then
-        if initial_position.y - target.position.y < -10 then
-            initial_position = { x = initial_position.x, y = initial_position.y + 50 }
-        end
-        if initial_position.y - target.position.y > 10 then
-            initial_position = { x = initial_position.x, y = initial_position.y - 10 }
+    if not spawner then
+        if inverted then
+            if initial_position.y - target.position.y < -10 then
+                initial_position = { x = initial_position.x, y = initial_position.y + 50 }
+            end
+            if initial_position.y - target.position.y > 10 then
+                initial_position = { x = initial_position.x, y = initial_position.y - 10 }
+            end
         end
     end
 
-    local located_position = find_initial_spot(surface, initial_position)
+    local located_position
+    if not spawner then
+        located_position = find_initial_spot(surface, initial_position)
+    else
+        located_position = initial_position
+    end
     local valid_position = surface.find_non_colliding_position('stone-furnace', located_position, 32, 1)
     local debug = Public.get('debug')
     if debug then
@@ -387,7 +394,7 @@ local function set_group_spawn_position(surface)
         return
     end
     Public.set('spawn_position', { x = position.x, y = position.y })
-    local spawn_position = get_spawn_pos()
+    local spawn_position = get_spawn_pos(true)
     if spawn_position then
         Public.debug_print('set_group_spawn_position -- Changed position to x' .. spawn_position.x .. ' y' .. spawn_position.y .. '.')
     end
@@ -1323,7 +1330,6 @@ local function spawn_unit_group_simple(fs)
     generated_units.unit_group_pos.positions[unit_group.unique_id] = { position = unit_group.position, index = 0 }
     local unit_settings = Public.get('unit_settings')
 
-
     if not es_settings.generated_units then
         es_settings.generated_units = 0
     end
@@ -1526,7 +1532,7 @@ Event.add(Public.events.on_spawn_unit_group, spawn_unit_group)
 Event.add(Public.events.on_spawn_unit_group_simple, spawn_unit_group_simple)
 
 Event.on_nth_tick(
-    50,
+    100,
     function ()
         local final_battle = Public.get('final_battle')
         if final_battle then

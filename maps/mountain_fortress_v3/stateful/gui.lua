@@ -384,7 +384,6 @@ local function objective_frames(player, stateful, player_frame, objective, data)
 
     local objective_locale_right_label = right_flow.add({ type = 'label', caption = objective_locale_right, tooltip = tooltip_right })
     data.random_objectives[#data.random_objectives + 1] = { name = objective_name, frame = objective_locale_right_label }
-    return
 end
 
 local function buff_window(player)
@@ -1163,6 +1162,14 @@ local function update_raw()
                 else
                     Public.set_stateful_settings('reversed', true)
                 end
+
+                game.forces.enemy.set_friend('player', true)
+                game.forces.aggressors.set_friend('player', true)
+                game.forces.aggressors_frenzy.set_friend('player', true)
+
+                game.forces.player.set_friend('enemy', true)
+                game.forces.player.set_friend('aggressors', true)
+                game.forces.player.set_friend('aggressors_frenzy', true)
 
                 collection.game_won_notified = true
                 refresh_boss_frame()

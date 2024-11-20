@@ -1,6 +1,7 @@
 local Event = require 'utils.event'
 local Server = require 'utils.server'
 local Global = require 'utils.global'
+local Gui = require 'utils.gui'
 
 local this = {
     difficulties = {
@@ -82,6 +83,14 @@ Global.register(
     end
 )
 
+local function get_top_frame(player)
+    if Gui.get_mod_gui_top_frame() then
+        return Gui.get_button_flow(player)['difficulty_gui']
+    else
+        return player.gui.top['difficulty_gui']
+    end
+end
+
 function Public.set_tooltip(...)
     if type(...) == 'table' then
         this.tooltip = ...
@@ -116,22 +125,44 @@ function Public.difficulty_gui()
     local tooltip = { 'modules.difficulty_vote_gui_tooltip', this.name }
 
     for _, player in pairs(game.connected_players) do
-        if player.gui.top['difficulty_gui'] then
-            player.gui.top['difficulty_gui'].caption = this.name
-            player.gui.top['difficulty_gui'].tooltip = this.button_tooltip or tooltip
-            player.gui.top['difficulty_gui'].style.font_color = this.print_color
+        local button = get_top_frame(player)
+        if button then
+            button.caption = this.name
+            button.tooltip = this.button_tooltip or tooltip
+            button.style.font_color = this.print_color
         else
-            local b =
-                player.gui.top.add {
-                    type = 'button',
-                    caption = this.name,
-                    tooltip = tooltip,
-                    name = 'difficulty_gui'
-                }
-            b.style.font = 'heading-2'
-            b.style.font_color = this.print_color
-            b.style.minimal_height = 38
-            b.style.minimal_width = this.gui_width
+            if Gui.get_mod_gui_top_frame() then
+                button =
+                    Gui.add_mod_button(
+                        player,
+                        {
+                            type = 'button',
+                            caption = this.name,
+                            tooltip = tooltip,
+                            name = 'difficulty_gui'
+                        }
+                    )
+                if button then
+                    button.style.font_color = { 0, 0, 0 }
+                    button.style.font = 'default-semibold'
+                    button.style.minimal_height = 36
+                    button.style.maximal_height = 36
+                    button.style.minimal_width = 100
+                    button.style.padding = -2
+                end
+            else
+                local b =
+                    player.gui.top.add {
+                        type = 'button',
+                        caption = this.name,
+                        tooltip = tooltip,
+                        name = 'difficulty_gui'
+                    }
+                b.style.font = 'heading-2'
+                b.style.font_color = this.print_color
+                b.style.minimal_height = 38
+                b.style.minimal_width = this.gui_width
+            end
         end
     end
 end

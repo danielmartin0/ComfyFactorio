@@ -454,6 +454,19 @@ function Public.enable_aoe_punch_globally(value)
     return this.rpg_extra.enable_aoe_punch_globally
 end
 
+--- Sets the amount of xp the player gets from killing a specific entity.
+---@param tbl table
+function Public.set_rpg_xp_yield(tbl)
+    if not tbl then
+        return error('No table given.', 2)
+    end
+    if not type(tbl) == 'table' then
+        return error('Given parameter is not a table.', 2)
+    end
+
+    this.rpg_extra.rpg_xp_yield = tbl
+end
+
 function Public.tweaked_crafting_items(tbl)
     if not tbl then
         return

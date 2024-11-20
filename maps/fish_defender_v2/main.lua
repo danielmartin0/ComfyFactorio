@@ -26,6 +26,11 @@ local enable_start_grace_period = true
 Gui.mod_gui_button_enabled = true
 Gui.button_style = 'mod_gui_button'
 Gui.set_toggle_button(true)
+Gui.set_mod_gui_top_frame(true)
+local button_id = 'fd-stats-button'
+local fish_button_id = 'fish_defense_waves'
+local progress_button_id = 'progress_defense_waves'
+
 
 local starting_items = {
     ['pistol'] = 1,
@@ -81,6 +86,14 @@ local biter_splash_damage = {
     }
 }
 
+local function get_top_frame(player, id)
+    if Gui.get_mod_gui_top_frame() then
+        return Gui.get_button_flow(player)[id]
+    else
+        return player.gui.top[id]
+    end
+end
+
 local function shuffle(tbl)
     local size = #tbl
     for i = size, 1, -1 do
@@ -104,16 +117,39 @@ local function check_timer()
 end
 
 local function create_wave_gui(player)
-    if player.gui.top['fish_defense_waves'] then
-        player.gui.top['fish_defense_waves'].destroy()
+    local button = get_top_frame(player, fish_button_id)
+    if button then
+        button.destroy()
     end
-    local frame = player.gui.top.add({ type = 'frame', name = 'fish_defense_waves' })
-    frame.style.minimal_height = 38
-    frame.style.maximal_height = 38
-    frame.style.top_padding = 6
-    frame.style.right_padding = 12
-    frame.style.bottom_padding = 5
-    frame.style.left_padding = 12
+
+    local frame
+
+    if Gui.get_mod_gui_top_frame() then
+        frame =
+            Gui.add_mod_button(
+                player,
+                {
+                    type = 'button',
+                    name = fish_button_id,
+                }
+            )
+        if frame then
+            frame.style.font_color = { 165, 165, 165 }
+            frame.style.font = 'default-semibold'
+            frame.style.minimal_height = 36
+            frame.style.maximal_height = 36
+            frame.style.minimal_width = 100
+            frame.style.padding = -2
+        end
+    else
+        frame = player.gui.top.add({ type = 'frame', name = fish_button_id })
+        frame.style.minimal_height = 38
+        frame.style.maximal_height = 38
+        frame.style.top_padding = 6
+        frame.style.right_padding = 12
+        frame.style.bottom_padding = 5
+        frame.style.left_padding = 12
+    end
 
     local wave_count = 0
     local wave_count_public = Public.get('wave_count')
@@ -125,23 +161,49 @@ local function create_wave_gui(player)
     end
 
     if not wave_grace_period then
-        local label = frame.add({ type = 'label', caption = 'Wave: ' .. wave_count })
-        label.style.font_color = { r = 0.88, g = 0.88, b = 0.88 }
-        label.style.font = 'default-listbox'
-        label.style.left_padding = 4
-        label.style.right_padding = 4
-        label.style.minimal_width = 68
-        label.style.font_color = { r = 0.33, g = 0.66, b = 0.9 }
+        frame.caption = 'Wave: ' .. wave_count
+        frame.style.font_color = { r = 0.88, g = 0.88, b = 0.88 }
+        frame.style.font = 'default-listbox'
+        frame.style.left_padding = 4
+        frame.style.right_padding = 4
+        frame.style.minimal_width = 68
+        frame.style.font_color = { r = 0.33, g = 0.66, b = 0.9 }
 
         local next_level_progress = game.tick % wave_interval / wave_interval
 
-        local progressbar = frame.add({ type = 'progressbar', value = next_level_progress })
-        progressbar.style = 'achievement_progressbar'
-        progressbar.style.minimal_width = 96
-        progressbar.style.maximal_width = 96
-        progressbar.style.padding = -1
-        progressbar.style.top_padding = 1
-        progressbar.style.height = 20
+        local progress = get_top_frame(player, progress_button_id)
+        if progress then
+            progress.destroy()
+        end
+
+        if Gui.get_mod_gui_top_frame() then
+            progress =
+                Gui.add_mod_button(
+                    player,
+                    {
+                        type = 'progressbar',
+                        name = progress_button_id,
+                        value = next_level_progress
+                    }
+                )
+            if progress then
+                progress.style = 'achievement_progressbar'
+                progress.style.minimal_width = 96
+                progress.style.maximal_width = 96
+                progress.style.padding = 5
+                progress.style.height = 35
+            end
+        else
+            progress = player.gui.top.add({ name = progress_button_id, type = 'progressbar', value = next_level_progress })
+            progress.style = 'achievement_progressbar'
+            progress.style.minimal_width = 96
+            progress.style.maximal_width = 96
+            progress.style.padding = -1
+            progress.style.top_padding = 1
+            progress.style.height = 20
+        end
+
+        storage.progress = progress
     else
         local time_remaining = math.floor(((wave_grace_period - (game.tick % wave_grace_period)) / 60) / 60)
         if time_remaining <= 0 then
@@ -151,12 +213,11 @@ local function create_wave_gui(player)
             check_timer()
         end
 
-        local label = frame.add({ type = 'label', caption = 'Waves will start in ' .. time_remaining .. ' minutes.' })
-        label.style.font_color = { r = 0.88, g = 0.88, b = 0.88 }
-        label.style.font = 'default-listbox'
-        label.style.left_padding = 4
-        label.style.right_padding = 4
-        label.style.font_color = { r = 0.33, g = 0.66, b = 0.9 }
+        frame.caption = 'Waves will start in ' .. time_remaining .. ' minutes.'
+        frame.style.font_color = { r = 0, g = 0, b = 0 }
+        frame.style.font = 'default-listbox'
+        frame.style.left_padding = 4
+        frame.style.right_padding = 4
 
         if not enable_start_grace_period then
             Public.set('wave_grace_period', nil)
@@ -216,19 +277,40 @@ local function update_fd_stats()
 end
 
 local function add_fd_stats_button(player)
-    local button_id = 'fd-stats-button'
-    if player.gui.top[button_id] then
-        player.gui.top[button_id].destroy()
+    local button = get_top_frame(player, button_id)
+    if button then
+        button.destroy()
     end
 
-    local b =
-        player.gui.top.add {
-            type = 'sprite-button',
-            name = button_id,
-            sprite = 'item/submachine-gun',
-            style = Gui.button_style
-        }
-    b.style.maximal_height = 38
+    if Gui.get_mod_gui_top_frame() then
+        button =
+            Gui.add_mod_button(
+                player,
+                {
+                    type = 'sprite-button',
+                    name = button_id,
+                    sprite = 'item/submachine-gun',
+                    style = Gui.button_style
+                }
+            )
+        if button then
+            button.style.font_color = { 165, 165, 165 }
+            button.style.font = 'default-semibold'
+            button.style.minimal_height = 36
+            button.style.maximal_height = 36
+            button.style.minimal_width = 40
+            button.style.padding = -2
+        end
+    else
+        local b =
+            player.gui.top.add {
+                type = 'sprite-button',
+                name = button_id,
+                sprite = 'item/submachine-gun',
+                style = Gui.button_style
+            }
+        b.style.maximal_height = 38
+    end
 end
 
 local function on_gui_click(event)
@@ -1588,6 +1670,7 @@ local function on_tick()
     if tick % 30 == 0 then
         has_the_game_ended()
         local market = Public.get('market')
+        game.forces.player.set_surface_hidden(surface.name, true)
         if market and market.valid then
             for _, player in pairs(game.connected_players) do
                 if surface.peaceful_mode == false then

@@ -986,6 +986,12 @@ function Public.reconstruct_all_trains(icw)
         end
         local carriages = wagon.entity.train.carriages
 
+        for _, carriage in pairs(carriages) do
+            if not icw.wagons[carriage.unit_number] then
+                Public.create_wagon(icw, carriage)
+            end
+        end
+
         Public.construct_train(icw, locomotive, carriages)
     end
     delete_empty_surfaces(icw)

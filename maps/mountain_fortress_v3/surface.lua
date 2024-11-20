@@ -90,7 +90,7 @@ function Public.create_landing_surface()
         height = 64,
         width = 256,
         peaceful_mode = false,
-        seed = 1337,
+        seed = 42,
         starting_area = 'very-low',
         starting_points = { { x = 0, y = 0 } },
         terrain_segmentation = 'normal',

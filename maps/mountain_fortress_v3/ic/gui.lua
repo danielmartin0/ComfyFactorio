@@ -83,20 +83,20 @@ end
 
 local function transfer_player_table(player, new_player)
     local trust_system = ICT.get('trust_system')
-    if not trust_system[player.index] then
+    if not trust_system[player.name] then
         return false
     end
 
-    if player.index == new_player.index then
+    if player.name == new_player.name then
         return false
     end
 
-    if not trust_system[new_player.index] then
-        trust_system[new_player.index] = trust_system[player.index]
+    if not trust_system[new_player.name] then
+        trust_system[new_player.name] = trust_system[player.name]
         local name = new_player.name
 
-        if not trust_system[new_player.index].players[name] then
-            increment(trust_system[new_player.index].players, name)
+        if not trust_system[new_player.name].players[name] then
+            increment(trust_system[new_player.name].players, name)
         end
 
         local renders = ICT.get('renders')
@@ -104,7 +104,7 @@ local function transfer_player_table(player, new_player)
         if not car then
             return error('Car was not found! This should not happen!', 2)
         end
-        car.owner = new_player.index
+        car.owner = new_player.name
 
         car.entity.minable = true
 
@@ -113,12 +113,12 @@ local function transfer_player_table(player, new_player)
         remove_toolbar(player)
         add_toolbar(new_player)
 
-        trust_system[player.index] = nil
+        trust_system[player.name] = nil
     else
         return false
     end
 
-    return trust_system[new_player.index]
+    return trust_system[new_player.name]
 end
 
 local function remove_main_frame(main_frame)
@@ -888,13 +888,13 @@ Gui.on_click(
 local clear_misc_settings =
     Task.register(
         function (data)
-            local player_index = data.player_index
+            local player_name = data.player_name
             local misc_settings = ICT.get('misc_settings')
-            if not misc_settings[player_index] then
+            if not misc_settings[player_name] then
                 return
             end
 
-            misc_settings[player_index] = nil
+            misc_settings[player_name] = nil
         end
     )
 
@@ -919,22 +919,22 @@ Gui.on_click(
         end
 
         local misc_settings = ICT.get('misc_settings')
-        if not misc_settings[player.index] then
-            misc_settings[player.index] = {
+        if not misc_settings[player.name] then
+            misc_settings[player.name] = {
                 first_warning = true
             }
 
             player.print('[IC] ARE YOU SURE? This action is irreversible!', { color = Color.warning })
-            Task.set_timeout_in_ticks(600, clear_misc_settings, { player_index = player.index })
+            Task.set_timeout_in_ticks(600, clear_misc_settings, { player_name = player.name })
             return
         end
 
-        if not misc_settings[player.index].final_warning then
-            misc_settings[player.index].final_warning = true
+        if not misc_settings[player.name].final_warning then
+            misc_settings[player.name].final_warning = true
             player.print(
                 '[IC] WARNING! WARNING WARNING! Pressing the save button ONE MORE TIME will DELETE your surface. This action is irreversible!',
                 Color.red)
-            Task.set_timeout_in_ticks(600, clear_misc_settings, { player_index = player.index })
+            Task.set_timeout_in_ticks(600, clear_misc_settings, { player_name = player.name })
             return
         end
 

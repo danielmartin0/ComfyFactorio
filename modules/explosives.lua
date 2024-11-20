@@ -39,7 +39,7 @@ local valid_container_types = {
 }
 
 local disabled_container_names = {
-    ['logistic-chest-buffer'] = true
+    ['buffer-chest'] = true
 }
 
 local function pos_to_key(position)

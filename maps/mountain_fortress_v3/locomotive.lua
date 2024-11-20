@@ -441,6 +441,37 @@ local function get_driver_action(entity)
     end
 end
 
+
+local function check_health(locomotive_health, locomotive_max_health)
+    local m = locomotive_health / locomotive_max_health
+    if locomotive_health > locomotive_max_health then
+        Public.set('locomotive_health', locomotive_max_health)
+    end
+
+
+
+    local health_text = Public.get('health_text')
+    if health_text and health_text.valid then
+        health_text.text = 'HP: ' .. round(locomotive_health) .. ' / ' .. round(locomotive_max_health)
+    end
+
+    local carriages = Public.get('carriages')
+    if carriages then
+        for i = 1, #carriages do
+            local entity = carriages[i]
+            if not (entity and entity.valid) then
+                return
+            end
+            get_driver_action(entity)
+            if entity.type == 'locomotive' then
+                entity.health = entity.max_health * m
+            else
+                entity.health = entity.max_health * m
+            end
+        end
+    end
+end
+
 local function set_locomotive_health()
     local locomotive_health = Public.get('locomotive_health')
     local locomotive_max_health = Public.get('locomotive_max_health')
@@ -450,41 +481,14 @@ local function set_locomotive_health()
         return
     end
 
-    local function check_health()
-        local m = locomotive_health / locomotive_max_health
-        if locomotive_health > locomotive_max_health then
-            Public.set('locomotive_health', locomotive_max_health)
-        end
-        local health_text = Public.get('health_text')
-        if health_text and health_text.valid then
-            health_text.text = 'HP: ' .. round(locomotive_health) .. ' / ' .. round(locomotive_max_health)
-        end
+    Public.set('locomotive_position', locomotive.position)
 
-
-
-
-        local carriages = Public.get('carriages')
-        if carriages then
-            for i = 1, #carriages do
-                local entity = carriages[i]
-                if not (entity and entity.valid) then
-                    return
-                end
-                get_driver_action(entity)
-                if entity.type == 'locomotive' then
-                    entity.health = entity.max_health * m
-                else
-                    entity.health = entity.max_health * m
-                end
-            end
-        end
+    if locomotive_health <= 0 then
+        Public.game_is_over()
+        Public.set('locomotive_health', 0)
     end
 
-    if not (locomotive and locomotive.valid) then
-        return
-    end
-
-    check_health()
+    check_health(locomotive_health, locomotive_max_health)
 end
 
 local function validate_index()

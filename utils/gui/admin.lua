@@ -158,7 +158,7 @@ local function clear_biters(player)
     local surface = player.surface
     local count = 0
     for c in surface.get_chunks() do
-        for _, entity in pairs(surface.find_entities_filtered({ area = { { c.x * 32, c.y * 32 }, { c.x * 32 + 32, c.y * 32 + 32 } }, type = "unit" })) do
+        for _, entity in pairs(surface.find_entities_filtered({ area = { { c.x * 32, c.y * 32 }, { c.x * 32 + 32, c.y * 32 + 32 } }, type = { "unit", "turret", "unit-spawner" } })) do
             if entity and entity.valid then
                 entity.destroy()
                 count = count + 1
